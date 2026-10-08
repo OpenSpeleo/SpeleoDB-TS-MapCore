@@ -1,0 +1,126 @@
+---
+exclude: ^(dist/|node_modules/|coverage/|\.speleodb-unreleased/)
+
+repos:
+  # -------------------------
+  # Generic sanity checks
+  # -------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+      - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+      - id: debug-statements
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: detect-private-key
+
+  # -------------------------
+  # Formatting
+  # -------------------------
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: v3.9.9
+    hooks:
+      - id: prettier
+        name: prettier markdown
+        types_or: [javascript, ts, json, yaml, markdown, css, html]
+        args: [--prose-wrap=always]
+
+  # -------------------------
+  # CI formatting
+  # -------------------------
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        # Accept GitHub Actions `on` and capitalized YAML booleans.
+        args:
+          - --config-data
+          - |
+            extends: default
+            rules:
+              truthy:
+                allowed-values: ['true', 'false', 'True', 'False', 'on']
+
+  - repo: https://github.com/shenxianpeng/hadolint-pre-commit
+    # This wrapper bundles Hadolint 2.15.1 in prek's isolated environment.
+    rev: v2.15.1.2
+    hooks:
+      - id: hadolint
+        # Allow latest image tags and distro-managed APT package versions.
+        args:
+          - --ignore
+          - DL3007 # Allow `latest` Docker image tags.
+          - --ignore
+          - DL3008 # Allow APT packages without explicit version pins.
+
+  # -------------------------
+  # JS/TS Linting
+  # -------------------------
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v10.12.0
+    hooks:
+      - id: eslint
+        types: [file]
+        files: (\.[cm]?[jt]sx?$|^package\.json$)
+        pass_filenames: false
+
+  # -------------------------
+  # TypeChecking
+  # -------------------------
+  - repo: local
+    hooks:
+      - id: typecheck
+        name: TypeScript typecheck
+        entry: bun run typecheck
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  # -------------------------
+  # Dependency Check
+  # -------------------------
+  - repo: local
+    hooks:
+      - id: lockfile-sync
+        name: Verify standalone Bun lockfile
+        entry: bun run check:lockfile
+        language: system
+        files: >-
+          (?x)^(package\.json|bun\.lock|bunfig\.toml|\.bun-version|
+          scripts/check-lockfile\.mjs)$
+        pass_filenames: false
+
+  # -------------------------
+  # Source Build Check
+  # -------------------------
+  - repo: local
+    hooks:
+      - id: build
+        name: Build TypeScript sources
+        entry: bun run build
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  # -------------------------
+  # Unittests
+  # -------------------------
+  - repo: local
+    hooks:
+      - id: unittests
+        name: Run unittests
+        entry: bun run test
+        language: system
+        pass_filenames: false
+        always_run: true
