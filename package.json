@@ -30,6 +30,7 @@
     "./geometry-cases.json": "./src/geometry-cases.json"
   },
   "scripts": {
+    "lock": "bun scripts/lock.mjs",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json",
     "test": "vitest run",
     "test:watch": "vitest",

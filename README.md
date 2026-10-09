@@ -74,3 +74,16 @@ standalone consumers compile sources from their pinned Git revision. Older pins
 can select their `speleodb-source` condition until updated to default source
 exports. See the monorepo's TypeScript package documentation for dependency
 overlays and the release handoff.
+
+## Locking inside the monorepo
+
+Run `bun run lock` here to resolve only this package's standalone `bun.lock`.
+Use `bun run lock --upgrade` to refresh direct and transitive resolutions within
+the existing manifest constraints. Both delegate to the monorepo's shared
+`utilities/bun-lock/lock.mjs`, using external temporary staging without
+installing dependencies or running lifecycle scripts. Only the child lock is
+published after success; refresh the root integration lock separately.
+
+This convenience command requires the monorepo. In a standalone clone, use
+`bun install --lockfile-only --ignore-scripts`. Existing standalone lock checks,
+builds and CI remain independent of the shared utility.
