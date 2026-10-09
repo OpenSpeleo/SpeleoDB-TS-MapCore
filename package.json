@@ -1,7 +1,10 @@
 {
   "name": "@speleodb/map-core",
   "version": "0.1.0",
-  "private": true,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "description": "Shared SpeleoDB map domain algorithms",
   "type": "module",
   "license": "AGPL-3.0-only",
