@@ -57,12 +57,12 @@ individual checks, or `bun run lint:fix` and `bun run format` to apply fixes.
 Lock verification runs in a temporary standalone directory so the parent
 workspace cannot hide stale dependencies. CI also checks linting and formatting.
 
-The repository is an npm-format private package, distributed through a public
-[GitHub repository](https://github.com/OpenSpeleo/SpeleoDB-TS-MapCore) pinned to
-a full commit SHA. It is not published on npm. Package exports point directly to
-`src/*.ts`, including type exports. Bun can execute these sources, and consuming
-applications compile them with their normal Vite build. Source and JSON assets
-travel together; no dependency installation build hook is required.
+The package is published publicly on npm as `@speleodb/map-core` from its
+[GitHub repository](https://github.com/OpenSpeleo/SpeleoDB-TS-MapCore). Package
+exports point directly to `src/*.ts`, including type exports. Bun can execute
+these sources, and consuming applications compile them with their normal Vite
+build. Source and JSON assets travel together; no dependency installation build
+hook is required.
 
 Run `bun run typecheck` and `bun run test` to check types and behavior.
 `bun run build` smoke-tests browser compilation with Bun and writes disposable
@@ -70,10 +70,20 @@ output to ignored `dist/`. That output is not part of the package or committed.
 CI validates source, tests, compilation and package contents.
 
 Monorepo consumers link the live local checkout before dependency resolution;
-standalone consumers compile sources from their pinned Git revision. Older pins
-can select their `speleodb-source` condition until updated to default source
-exports. See the monorepo's TypeScript package documentation for dependency
-overlays and the release handoff.
+standalone consumers compile sources from their pinned npm version. Older Git
+pins can select their `speleodb-source` condition until updated to default
+source exports. See the monorepo's TypeScript package documentation for
+dependency overlays and the release handoff.
+
+## npm releases
+
+A pushed `v<package.json version>` tag runs the full CI verification and then
+builds and publishes the package with npm trusted publishing. The publish job
+requires the tag to match the package version. Configure `@speleodb/map-core` on
+npmjs.com with a GitHub Actions trusted publisher for organization `OpenSpeleo`,
+repository `SpeleoDB-TS-MapCore`, workflow filename `ci.yml`, environment name
+`publish`, label `github`, and permission to run `npm publish`. The job uses
+GitHub OIDC; no npm write token is needed.
 
 ## Locking inside the monorepo
 
