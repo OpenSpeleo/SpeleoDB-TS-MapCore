@@ -5,3 +5,5 @@ export * from "./depth.js";
 export * from "./colors.js";
 export * from "./landmarks.js";
 export * from "./preparation.js";
+export * from "./landmark-icons.js";
+export * from "./geometry-labels.js";

@@ -15,6 +15,7 @@
 
 import type * as GeoJSON from "geojson";
 import { safeHexColor } from "./colors.js";
+import { normalizeLandmarkIcon, type LandmarkIcon } from "./landmark-icons.js";
 
 const PERSONAL_COLLECTION_ID = "__personal__";
 const PERSONAL_COLLECTION_NAME = "Personal Landmarks";
@@ -22,6 +23,7 @@ const UNNAMED_COLLECTION_NAME = "Unnamed Collection";
 const UNNAMED_LANDMARK_NAME = "Unnamed Landmark";
 
 export interface LandmarkListItem {
+  icon: LandmarkIcon;
   id: string;
   name: string;
   description: string;
@@ -89,6 +91,7 @@ function readFeatureItem(
 
   return {
     id,
+    icon: normalizeLandmarkIcon(properties.icon),
     name: toStringValue(properties.name) || UNNAMED_LANDMARK_NAME,
     description: toStringValue(properties.description),
     latitude,

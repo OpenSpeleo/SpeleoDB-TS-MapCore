@@ -10,10 +10,12 @@ product policies.
 | Import                                 | Responsibility                                                                                      |
 | -------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `@speleodb/map-core/geometry`          | Bounded LineString/Polygon validation, topology, spherical bounding-box area and vertex measurement |
+| `@speleodb/map-core/geometry-labels`   | Unicode alias validation and stable interior/midpoint label features                                |
 | `@speleodb/map-core/geographic-bounds` | Directed longitude intervals, dateline normalization and Web Mercator footprints                    |
 | `@speleodb/map-core/geo`               | Spherical distance with an explicit Earth-radius parameter                                          |
 | `@speleodb/map-core/depth`             | Depth domains, limits, unit conversion and configurable depth processing                            |
 | `@speleodb/map-core/landmarks`         | Collection grouping with application-owned metadata and ordering policies                           |
+| `@speleodb/map-core/landmark-icons`    | Landmark icon wire values, choice labels, validation and display defaults                           |
 | `@speleodb/map-core/visibility`        | Effective country, individual and readiness gating without owning preferences                       |
 | `@speleodb/map-core/colors`            | Validation of model-provided RGB hex colors                                                         |
 | `@speleodb/map-core/preparation`       | Cooperative immutable geometry traversal with per-position and per-container checkpoints            |

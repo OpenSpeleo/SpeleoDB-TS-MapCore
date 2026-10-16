@@ -58,3 +58,26 @@ through shared package exports, including worker and dynamic import edges.
 A passing unit suite does not verify a provider's live style or real WebGL
 behavior. Those remain application browser checks with the pinned MapLibre
 engine and a separate live provider resource probe.
+
+## Geometry labels and landmark icons
+
+Optional geometry aliases use the server contract's 32 Unicode code-point limit.
+`createGeometryLabelFeature` derives one label point per saved geometry: lines
+use half the full projected path length; polygons use an interior
+pole-of-inaccessibility position. Coordinates are normalized before polylabel;
+extremely thin polygons use a bounded scanline calculation before any grid is
+allocated. Polar coordinates use a finite geographic fallback. Neither
+calculation changes the original geometry. Consumers cache results with the
+content revision, so visibility changes and camera movement do no geometry work.
+
+`LandmarkIcon`, `LANDMARK_ICON_OPTIONS`, and `isLandmarkIcon` define the five
+supported wire values. `normalizeLandmarkIcon` is a display fallback for missing
+cached properties, not an API-input validator. In particular, old queued edits
+with no icon represent unknown/unmodified intent and must not be normalized to
+an explicit DEFAULT mutation. Collection grouping preserves the normalized icon.
+Artwork, colorization, image registration and label layers belong to map-viewer;
+caches, offline operations and forms belong to each application.
+
+Focused tests cover Unicode limits, concave/thin polygons, complete-path
+midpoints, repeated vertices, polar/tiny coordinates, immutability and icon
+preservation through cached collection grouping.
