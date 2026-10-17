@@ -19,12 +19,21 @@ product policies.
 | `@speleodb/map-core/visibility`        | Effective country, individual and readiness gating without owning preferences                       |
 | `@speleodb/map-core/colors`            | Validation of model-provided RGB hex colors                                                         |
 | `@speleodb/map-core/preparation`       | Cooperative immutable geometry traversal with per-position and per-container checkpoints            |
+| `@speleodb/map-core/coordinate-bounds` | Camera coordinate accumulation, bbox decoding and interruptible longitude sorting                   |
+| `@speleodb/map-core/geojson-transport` | Bounded JSON-tree messages and safe reconstruction without worker ownership                         |
+| `@speleodb/map-core/nearest`           | Stable nearest geographic candidate selection with caller-owned eligibility and radius              |
 
 GeoJSON is input data, not renderer state. Traversal preserves source identity
 when no transformation is requested. Altitude flattening is an explicit policy:
 web uses it for overlays, while mobile preserves altitude for depth and offline
 workflows. Generators let the application schedule and cancel work within a
 single large geometry. Empty collections also produce checkpoints.
+
+See [coordinate bounds](docs/coordinate-bounds.md) for the distinction between
+permissive camera fitting and strict directed-arc validation, and
+[data transport and selection](docs/data-transport-and-selection.md) for bounded
+worker messages and nearest-candidate contracts. Transport has an explicit
+subpath because most consumers do not need its wire types.
 
 Longitude intervals describe the entire eastward arc, not just two endpoints.
 Merging intervals preserves their coverage, including full-world intervals. GIS
@@ -67,9 +76,12 @@ build. Source and JSON assets travel together; no dependency installation build
 hook is required.
 
 Run `bun run typecheck` and `bun run test` to check types and behavior.
-`bun run build` smoke-tests browser compilation with Bun and writes disposable
-output to ignored `dist/`. That output is not part of the package or committed.
-CI validates source, tests, compilation and package contents.
+`bun run test` runs the configured Vitest suite used by CI; `bun test` selects
+Bun's separate built-in test runner. CI runs both commands to verify the
+complete library suite with both runners. `bun run build` smoke-tests browser
+compilation with Bun and writes disposable output to ignored `dist/`. That
+output is not part of the package or committed. CI validates source, tests,
+compilation and package contents.
 
 Monorepo consumers link the live local checkout before dependency resolution;
 standalone consumers compile sources from their pinned npm version. Older Git

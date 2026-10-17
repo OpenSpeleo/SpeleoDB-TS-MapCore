@@ -7,3 +7,5 @@ export * from "./landmarks.js";
 export * from "./preparation.js";
 export * from "./landmark-icons.js";
 export * from "./geometry-labels.js";
+export * from "./coordinate-bounds.js";
+export * from "./nearest.js";
