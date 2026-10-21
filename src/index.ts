@@ -9,3 +9,4 @@ export * from "./landmark-icons.js";
 export * from "./geometry-labels.js";
 export * from "./coordinate-bounds.js";
 export * from "./nearest.js";
+export * from "./survey-clipping.js";

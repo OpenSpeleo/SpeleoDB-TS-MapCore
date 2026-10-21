@@ -7,21 +7,22 @@ product policies.
 
 ## APIs and ownership
 
-| Import                                 | Responsibility                                                                                      |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `@speleodb/map-core/geometry`          | Bounded LineString/Polygon validation, topology, spherical bounding-box area and vertex measurement |
-| `@speleodb/map-core/geometry-labels`   | Unicode alias validation and stable interior/midpoint label features                                |
-| `@speleodb/map-core/geographic-bounds` | Directed longitude intervals, dateline normalization and Web Mercator footprints                    |
-| `@speleodb/map-core/geo`               | Spherical distance with an explicit Earth-radius parameter                                          |
-| `@speleodb/map-core/depth`             | Depth domains, limits, unit conversion and configurable depth processing                            |
-| `@speleodb/map-core/landmarks`         | Collection grouping with application-owned metadata and ordering policies                           |
-| `@speleodb/map-core/landmark-icons`    | Landmark icon wire values, choice labels, validation and display defaults                           |
-| `@speleodb/map-core/visibility`        | Effective country, individual and readiness gating without owning preferences                       |
-| `@speleodb/map-core/colors`            | Validation of model-provided RGB hex colors                                                         |
-| `@speleodb/map-core/preparation`       | Cooperative immutable geometry traversal with per-position and per-container checkpoints            |
-| `@speleodb/map-core/coordinate-bounds` | Camera coordinate accumulation, bbox decoding and interruptible longitude sorting                   |
-| `@speleodb/map-core/geojson-transport` | Bounded JSON-tree messages and safe reconstruction without worker ownership                         |
-| `@speleodb/map-core/nearest`           | Stable nearest geographic candidate selection with caller-owned eligibility and radius              |
+| Import                                 | Responsibility                                                                                          |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `@speleodb/map-core/geometry`          | Bounded LineString/Polygon validation, topology, spherical bounding-box area and vertex measurement     |
+| `@speleodb/map-core/geometry-labels`   | Unicode alias validation and stable interior/midpoint label features                                    |
+| `@speleodb/map-core/geographic-bounds` | Directed longitude intervals, dateline normalization and Web Mercator footprints                        |
+| `@speleodb/map-core/geo`               | Spherical distance with an explicit Earth-radius parameter                                              |
+| `@speleodb/map-core/depth`             | Depth domains, limits, unit conversion and configurable depth processing                                |
+| `@speleodb/map-core/landmarks`         | Collection grouping with application-owned metadata and ordering policies                               |
+| `@speleodb/map-core/landmark-icons`    | Landmark icon wire values, choice labels, validation and display defaults                               |
+| `@speleodb/map-core/visibility`        | Effective country, individual and readiness gating without owning preferences                           |
+| `@speleodb/map-core/colors`            | Validation of model-provided RGB hex colors                                                             |
+| `@speleodb/map-core/preparation`       | Cooperative immutable geometry traversal with per-position and per-container checkpoints                |
+| `@speleodb/map-core/coordinate-bounds` | Camera coordinate accumulation, bbox decoding and interruptible longitude sorting                       |
+| `@speleodb/map-core/geojson-transport` | Bounded JSON-tree messages and safe reconstruction without worker ownership                             |
+| `@speleodb/map-core/nearest`           | Stable nearest geographic candidate selection with caller-owned eligibility and radius                  |
+| `@speleodb/map-core/survey-clipping`   | Opt-in polygon clipping of survey points and lines, with cooperative scheduling and preserved elevation |
 
 GeoJSON is input data, not renderer state. Traversal preserves source identity
 when no transformation is requested. Altitude flattening is an explicit policy:
@@ -34,6 +35,10 @@ permissive camera fitting and strict directed-arc validation, and
 [data transport and selection](docs/data-transport-and-selection.md) for bounded
 worker messages and nearest-candidate contracts. Transport has an explicit
 subpath because most consumers do not need its wire types.
+
+See [survey clipping](docs/survey-clipping.md) for the public web viewer's
+opt-in display restriction. It clips crossing lines and includes boundary
+points; it does not restrict access to downloaded data or change other viewers.
 
 Longitude intervals describe the entire eastward arc, not just two endpoints.
 Merging intervals preserves their coverage, including full-world intervals. GIS
@@ -90,6 +95,13 @@ source exports. See the monorepo's TypeScript package documentation for
 dependency overlays and the release handoff.
 
 ## npm releases
+
+Version **0.4.0** adds the opt-in `clipSurveyGeoJSONSteps` generator, exported
+from the package root and `@speleodb/map-core/survey-clipping`. It clips survey
+points and lines to a Polygon while preserving elevation and supporting
+cooperative scheduling. Existing callers retain their behavior unless they
+explicitly apply clipping. See [survey clipping](docs/survey-clipping.md) for
+the input contract and display-only scope.
 
 A pushed `v<package.json version>` tag runs the full CI verification and then
 builds and publishes the package with npm trusted publishing. The publish job
