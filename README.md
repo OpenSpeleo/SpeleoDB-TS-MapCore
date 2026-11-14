@@ -50,6 +50,13 @@ fallbacks and color ramps must be supplied or retained by the application;
 sharing arithmetic must not silently change stored-data interpretation. Model
 colors remain server-driven; this package contains no project color palette.
 
+## Exploration lead directions
+
+Exploration lead bearings and fifteen-metre cone polygons are shared through
+`@speleodb/map-core/exploration-leads` and the package root. See
+[exploration lead directions](docs/exploration-leads.md) for the data, metric
+size and source-ownership contracts.
+
 ## Geometry contract
 
 `geometry-contract.json` and `geometry-cases.json` snapshot the server's
