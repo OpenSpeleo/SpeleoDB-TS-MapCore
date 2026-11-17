@@ -7,18 +7,49 @@ const EARTH_RADIUS_METERS = 6_371_000;
 const ARC_SEGMENTS = 12;
 const RADIANS = Math.PI / 180;
 
-/** Missing headings in previously cached overlays mean no saved direction. */
-export function explorationLeadHeadings(value: unknown): number[] {
-  if (!Array.isArray(value)) return [];
-  return value
-    .filter(
-      (heading): heading is number =>
-        typeof heading === "number" &&
-        Number.isFinite(heading) &&
-        heading >= 0 &&
-        heading < 360,
+export interface ExplorationLeadDirection {
+  heading: number | null;
+  checked: boolean;
+}
+
+/** An undirected lead remains checkable and never counts as an empty group. */
+export function createDefaultExplorationLeadDirections(): ExplorationLeadDirection[] {
+  return [{ heading: null, checked: false }];
+}
+
+/** Reject incomplete records instead of silently dropping a lead or its status. */
+export function parseExplorationLeadDirections(
+  value: unknown,
+): ExplorationLeadDirection[] | null {
+  if (
+    !Array.isArray(value) ||
+    value.length === 0 ||
+    value.length > EXPLORATION_LEAD_MAX_HEADINGS
+  )
+    return null;
+  const directions: ExplorationLeadDirection[] = [];
+  for (const entry of value) {
+    if (entry === null || typeof entry !== "object" || Array.isArray(entry))
+      return null;
+    const { heading, checked } = entry as Record<string, unknown>;
+    if (
+      typeof checked !== "boolean" ||
+      (heading !== null &&
+        (typeof heading !== "number" ||
+          !Number.isFinite(heading) ||
+          heading < 0 ||
+          heading >= 360))
     )
-    .slice(0, EXPLORATION_LEAD_MAX_HEADINGS);
+      return null;
+    directions.push({ heading, checked });
+  }
+  return directions;
+}
+
+export function isExplorationLeadFullyChecked(
+  directions: readonly ExplorationLeadDirection[],
+): boolean {
+  return directions.length > 0 && directions.every((entry) => entry.checked);
 }
 
 /** Derive ground-scale cones without changing the application's point source. */
@@ -39,9 +70,12 @@ export function buildExplorationLeadCones(
     )
       continue;
     const origin: Position = [longitude, latitude];
-    for (const [index, heading] of explorationLeadHeadings(
-      feature.properties?.headings,
-    ).entries()) {
+    const directions = parseExplorationLeadDirections(
+      feature.properties?.directions,
+    );
+    if (!directions) continue;
+    for (const [index, { heading, checked }] of directions.entries()) {
+      if (checked || heading === null) continue;
       const ring: Position[] = [origin];
       for (let segment = 0; segment <= ARC_SEGMENTS; segment++) {
         const bearing =
